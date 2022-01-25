@@ -43,7 +43,16 @@ Author: Jung
 
 ### **PART1 프로젝트 생성**
 
-</br>
+- Project : Gradle
+- Spring boot : 2.6.2
+- Language : JAVA
+- Packaging : War
+- JAVA ver. : 11
+- Project Meta
+  - Group : mvc1
+  - Artifact : servlet
+  - name : servlet
+  - Dependencies : Spring Web, Lombok
 
 </br>
 

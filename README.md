@@ -714,8 +714,25 @@ public class ResponseJsonServlet extends HttpServlet {
 
 ### **Section3서블릿,JSP,MVC패턴**
 
+---
+
+- 서블릿과 JSP의 문제
+
+> - view 화면을 위한 HTML 만드는 작업이 자바코드와 섞임
+> - JSP는 HTML 작업을 가져가고, 중간 중간 동적으로 변경 부분만 자바 코드 적용
+> - but, 그러나 JSP에서도 너무 많은 작업을 담당함.
+> - 우선 변경 cycle이 다르기 때문에 유지 보수 어려움
+
+- MVC 패턴
+
+> - Modle : 뷰로 전달할 데이터를 저장.
+> - View : 모델에 담겨 있는 데이터를 사용하여 화면 랜더링
+> - Controller : HTTP 요청 받고, 파라미터 검증 이후 비즈니스 로직 실행, 또 뷰에 전달할 데이터를 모델에 담아 전달
+
 </br>
 
+</br>
+</br>
 </br>
 
 ### **Section4MVC프레임워크 만들기**

@@ -26,11 +26,16 @@ Author: Jung
     - [**HttpServletResponse - 기본 사용법**](#httpservletresponse---기본-사용법)
     - [**HTTP 응답 데이터 - 단순 텍스트, HTML**](#http-응답-데이터---단순-텍스트-html)
     - [**HTTP 응답 데이터 - API JSON**](#http-응답-데이터---api-json)
-  - [**Section3서블릿,JSP,MVC패턴**](#section3서블릿jspmvc패턴)
-  - [**Section4MVC프레임워크 만들기**](#section4mvc프레임워크-만들기)
-  - [**Section5스프링 MVC - 구조 이해**](#section5스프링-mvc---구조-이해)
-  - [**Section6스프링 MVC - 기본 기능**](#section6스프링-mvc---기본-기능)
-  - [**Section7스프링 MVC - 웹 페이지 만들기**](#section7스프링-mvc---웹-페이지-만들기)
+  - [**Section3 서블릿,JSP,MVC패턴**](#section3-서블릿jspmvc패턴)
+  - [**Section4 VC프레임워크 만들기**](#section4-vc프레임워크-만들기)
+    - [**V1**](#v1)
+    - [**V2**](#v2)
+    - [**V3**](#v3)
+    - [**V4**](#v4)
+    - [**V5**](#v5)
+  - [**Section5 스프링 MVC - 구조 이해**](#section5-스프링-mvc---구조-이해)
+  - [**Section6 스프링 MVC - 기본 기능**](#section6-스프링-mvc---기본-기능)
+  - [**Section7 스프링 MVC - 웹 페이지 만들기**](#section7-스프링-mvc---웹-페이지-만들기)
 - [**PART2**](#part2)
   - [**PART2 프로젝트 생성**](#part2-프로젝트-생성)
   - [**Section1타임리프 - 기본 기능**](#section1타임리프---기본-기능)
@@ -712,7 +717,7 @@ public class ResponseJsonServlet extends HttpServlet {
 
 </br>
 
-### **Section3서블릿,JSP,MVC패턴**
+### **Section3 서블릿,JSP,MVC패턴**
 
 ---
 
@@ -730,30 +735,120 @@ public class ResponseJsonServlet extends HttpServlet {
 > - Controller : HTTP 요청 받고, 파라미터 검증 이후 비즈니스 로직 실행, 또 뷰에 전달할 데이터를 모델에 담아 전달
 
 </br>
+</br>
+</br>
+
+### **Section4 VC프레임워크 만들기**
+
+</br>
+
+#### **V1**
+
+</br>
+
+|        **v1 구조**        |
+| :-----------------------: |
+| ![v1 image](./res/v1.png) |
+
+</br>
+
+> - URL 매핑 정보를 통해 controller 조회
+> - controller 호출
+> - JSP forward
+> - 모든 컨트롤러에서 뷰로 이동하는 부분에 중복 발생
+
+</br>
+
+#### **V2**
+
+</br>
+
+|        **v2 구조**        |
+| :-----------------------: |
+| ![v2 image](./res/v2.png) |
+
+</br>
+
+> - URL 통해 controller 조회
+> - controller 호출
+> - MyView 반환 후 랜더링
+> - JSP forward
+> - 여전히 서블릿 종속성과 뷰 이름 중복 문제
+
+</br>
+
+#### **V3**
+
+</br>
+
+|          v3 구조          |
+| :-----------------------: |
+| ![v3 image](./res/v3.png) |
+
+</br>
+
+> - URL 통해 controller 조회
+> - controller 호출
+> - ModelView 반환
+> - viewResolver로 물리 경로 생성
+> - MyView 반환 한 후 랜더링
+> - ModeView 객체를 생성하고 반환해야하는 번거로움
+
+</br>
+
+#### **V4**
+
+</br>
+
+|          v4 구조          |
+| :-----------------------: |
+| ![v4 image](./res/v4.png) |
+
+</br>
+
+> - URL controller 조회
+> - controller 호출
+> - viewName(논리 경로) 반환
+> - viewResolver로 물리 경로 생성
+> - Myview를 반환 받고 랜더링
+
+</br>
+
+#### **V5**
+
+</br>
+
+|          v5 구조          |
+| :-----------------------: |
+| ![v5 image](./res/v5.png) |
+
+</br>
+
+- Controller에 종속적이지 않게 만들기
+- Controller가 URL 통해 handler 조회
+- 조회한 handler를 처리할 수 있는 adapter 조회
+- handler 어댑터에서 handler 실행(Controller 역할)
+- ModelView 반환
+- viewResolver를 호출 하여 MyView 반환
+- 랜더링
 
 </br>
 </br>
 </br>
 
-### **Section4MVC프레임워크 만들기**
+### **Section5 스프링 MVC - 구조 이해**
 
 </br>
 
 </br>
 
-### **Section5스프링 MVC - 구조 이해**
+### **Section6 스프링 MVC - 기본 기능**
 
 </br>
 
 </br>
 
-### **Section6스프링 MVC - 기본 기능**
-
-</br>
-
-</br>
-
-### **Section7스프링 MVC - 웹 페이지 만들기**
+### **Section7 스프링 MVC - 웹 페이지 만들기**
 
 </br>
 

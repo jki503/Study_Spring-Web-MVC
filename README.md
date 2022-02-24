@@ -35,6 +35,10 @@ Author: Jung
     - [**V5**](#v5)
   - [**Section5 스프링 MVC - 구조 이해**](#section5-스프링-mvc---구조-이해)
   - [**Section6 스프링 MVC - 기본 기능**](#section6-스프링-mvc---기본-기능)
+    - [**Logging**](#logging)
+    - [**요청 매핑**](#요청-매핑)
+    - [**HTTP 요청 - 기본, 헤더조회**](#http-요청---기본-헤더조회)
+    - [**HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form**](#http-요청-파라미터---쿼리-파라미터-html-form)
   - [**Section7 스프링 MVC - 웹 페이지 만들기**](#section7-스프링-mvc---웹-페이지-만들기)
 - [**PART2**](#part2)
   - [**PART2 프로젝트 생성**](#part2-프로젝트-생성)
@@ -846,7 +850,67 @@ public class ResponseJsonServlet extends HttpServlet {
 
 </br>
 
+#### **Logging**
+
 </br>
+
+- 선언
+
+> @Slf4j -> lombok annotation 사용  
+> private Logger log = LoggerFactory.getLogger(getClass())  
+> private Logger log = LoggerFactory.geLogger(xxx.class)
+
+</br>
+
+- log 단계
+
+| level |            description             |
+| :---: | :--------------------------------: |
+| trace |           local 서버에서           |
+| info  |           개발 서버에서            |
+| debug | 운영 서버에서도 봐야할 중요한 정보 |
+| warn  |                경고                |
+| error |                에러                |
+
+</br>
+
+- 설정 (application.properties)
+
+</br>
+
+> logging.level.practice.springmvc=level
+
+</br>
+
+- 올바른 로그 사용법
+
+</br>
+
+|          나쁜 예          |         좋은 예          |
+| :-----------------------: | :----------------------: |
+| log.info("data =" + data) | log.info("data={}",data) |
+
+</br>
+
+> "data =" +data -> 문자열 더하기 연산 실행  
+> 심지어 로그 레벨이 아닐때도 더하기 연산이 발생되어 성능 저하
+
+</br>
+
+- 로그 사용시 장점
+
+> 쓰레드 정보나 클래스 이름같은 부가 정보도 함께 볼 수 있음.
+> 로그를 상황에 따라(개발 서버 or 운영서버) 출력 가능
+> 파일, 네트워크 등 로그를 별도의 위치에 남길 수 있음.
+> System.out보다 성능이 좋음
+
+</br>
+
+#### **요청 매핑**
+
+#### **HTTP 요청 - 기본, 헤더조회**
+
+#### **HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form**
 
 ### **Section7 스프링 MVC - 웹 페이지 만들기**
 

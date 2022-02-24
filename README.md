@@ -37,6 +37,7 @@ Author: Jung
   - [**Section6 스프링 MVC - 기본 기능**](#section6-스프링-mvc---기본-기능)
     - [**Logging**](#logging)
     - [**요청 매핑**](#요청-매핑)
+    - [**요청 매핑 - API 예시**](#요청-매핑---api-예시)
     - [**HTTP 요청 - 기본, 헤더조회**](#http-요청---기본-헤더조회)
     - [**HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form**](#http-요청-파라미터---쿼리-파라미터-html-form)
   - [**Section7 스프링 MVC - 웹 페이지 만들기**](#section7-스프링-mvc---웹-페이지-만들기)
@@ -907,6 +908,153 @@ public class ResponseJsonServlet extends HttpServlet {
 </br>
 
 #### **요청 매핑**
+
+</br>
+
+- @Controller 와 @RestController 차이
+
+</br>
+
+> String 반환 시  
+> `@Controller`는 뷰로 인식 -> 뷰를 찾고 뷰가 랜더링
+> `@RestController`는 HTTP 메시지 바디에 바로 입력
+
+</br>
+
+- PathVariable(경로 변수 사용)
+
+</br>
+
+```java
+
+@GetMapping("/mapping/users/{userId}/orders/{orderId}")
+    public String mappingPath(@PathVariable String userId, @PathVariable String orderId){
+        log.info("mappingPath userId = {}",userId);
+        log.info("mappingPath orderId = {}",orderId);
+
+        return "ok";
+    }
+
+```
+
+</br>
+
+> 최근 HTTP API는 리소스 경로에 식별자 넣는 스타일 선호
+> @PathVarible의 이름과 파라미터 이름이 같으면 생략 가능
+
+</br>
+
+- 특정 파라미터 조건 매핑
+
+</br>
+
+```java
+
+@GetMapping(value = "/mapping-param", params = "mode=debug")
+    public String mappingParam(){
+        log.info("mappingParam");
+        return "ok";
+    }
+
+```
+
+</br>
+
+- 특정 헤더 조건 매핑
+
+</br>
+
+```java
+
+@GetMapping(value = "/mapping-header", headers = "mode=debug")
+    public String mappingHeader(){
+        log.info("mappingHeader");
+        return "ok";
+    }
+
+
+```
+
+- 미디어 타입 조건 매핑 - HTTP 요청 Content-Type, consume
+
+</br>
+
+```java
+
+@PostMapping(value = "/mapping-consume", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String mappingConsumes(){
+        log.info("mappingConsumes");
+        return "ok";
+    }
+
+```
+
+</br>
+
+- 미디어 타입 조건 매핑 - HTTP 요청 Accept, produce
+
+</br>
+
+```java
+
+@PostMapping(value = "mapping-produce", produces = MediaType.TEXT_HTML_VALUE)
+    public String mappingProduces(){
+        log.info("mappingProduces");
+        return "ok";
+    }
+
+```
+
+</br>
+
+#### **요청 매핑 - API 예시**
+
+</br>
+
+```java
+
+package practice.springmvc.basic.requestMapping;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/mapping/users")
+public class MappingClassController {
+
+    @GetMapping
+    public String users(){
+        return "get users";
+    }
+
+    @PostMapping
+    public String addUser(){
+        return "post user";
+    }
+
+    @GetMapping("/{userId}")
+    public String findUser(@PathVariable String userId){
+        return "get userId=" +userId;
+    }
+
+    @PatchMapping("/{userId}")
+    public String updateUser(@PathVariable String userId){
+        return "update userId="+userId;
+    }
+
+    @DeleteMapping("/{userId}")
+    public String deleteUser(@PathVariable String userId){
+        return "delete userId="+userId;
+    }
+}
+
+```
+
+</br>
+
+> class level에 매핑 정보 설정  
+> 이후 method level에서 해당 정보 조합 후 사용
+
+</br>
 
 #### **HTTP 요청 - 기본, 헤더조회**
 

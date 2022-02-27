@@ -40,6 +40,11 @@ Author: Jung
     - [**요청 매핑 - API 예시**](#요청-매핑---api-예시)
     - [**HTTP 요청 - 기본, 헤더조회**](#http-요청---기본-헤더조회)
     - [**HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form**](#http-요청-파라미터---쿼리-파라미터-html-form)
+    - [**HTTP 요청 메시지 단순 텍스트**](#http-요청-메시지-단순-텍스트)
+    - [**HTTP 요청 메시지 - JSON**](#http-요청-메시지---json)
+    - [**HTTP 응답 - 정적 리소스, 뷰 템플릿**](#http-응답---정적-리소스-뷰-템플릿)
+    - [**HTTP 응답 - HTTP API, 메시지 바디에 직접 입력**](#http-응답---http-api-메시지-바디에-직접-입력)
+    - [**HTTP 메시지 컨버터**](#http-메시지-컨버터)
   - [**Section7 스프링 MVC - 웹 페이지 만들기**](#section7-스프링-mvc---웹-페이지-만들기)
 - [**PART2**](#part2)
   - [**PART2 프로젝트 생성**](#part2-프로젝트-생성)
@@ -1058,7 +1063,463 @@ public class MappingClassController {
 
 #### **HTTP 요청 - 기본, 헤더조회**
 
+</br>
+
+```java
+
+package practice.springmvc.basic.request;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+
+@Slf4j
+@RestController
+public class RequestHeaderController {
+
+    @RequestMapping("/headers")
+    public String headers(HttpServletRequest request,
+                          HttpServletResponse response,
+                          HttpMethod httpMethod,
+                          Locale locale,
+                          @RequestHeader MultiValueMap<String,String> headerMap,
+                          @RequestHeader("host") String host,
+                          @CookieValue(value = "myCookie",required = false)String cookie){
+
+        log.info("request={}", request);
+        log.info("response={}", response);
+        log.info("httpMethod={}", httpMethod);
+        log.info("locale={}", locale);
+        log.info("headerMap={}", headerMap);
+        log.info("header host={}", host);
+        log.info("myCookie={}", cookie);
+
+        return "ok";
+    }
+}
+
+
+```
+
+</br>
+
+|                     name                     |             description             |
+| :------------------------------------------: | :---------------------------------: |
+|                  HttpMethod                  |          HTTP 메서드 조회           |
+|                    Locale                    |             locale 정보             |
+| @RequestHeader MultiValueMap<String, String> | 모든 Http 헤더를 MultiMap 형식 조회 |
+|            @RequestHeader("host")            |         특정 Http 헤더 조회         |
+|                 @CookieValue                 |           특정 쿠키 조회            |
+
+</br>
+
 #### **HTTP 요청 파라미터 - 쿼리 파라미터, HTML Form**
+
+</br>
+
+|       name        |                                                 description                                                  |
+| :---------------: | :----------------------------------------------------------------------------------------------------------: |
+| GET-쿼리 파라미터 |                        URL의 쿼리 파라미터에 데이터 포함해서 전달(검색, 필터, 페이징)                        |
+| POST - HTML FORM  | application/x-www-form-urlencoded, 메시지 바디에 쿼리파라미터 형식 전달 (회원 가입, 상품 주문, HTML 폼 사용) |
+| Http message body |              HTTP API에서 주로 사용(JSON, XML, TEXT), 데이터 형식은 주로 JSON(POST, PUT, PATCH)              |
+
+</br>
+
+- 요청 파라미터 조회 방법
+
+</br>
+
+- HttpServletRequest 사용
+
+</br>
+
+```java
+
+@RequestMapping("/request-param-v1")
+    public void requestParamV1(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String username = request.getParameter("username");
+        int age = Integer.parseInt(request.getParameter("age"));
+
+        log.info("username={}, age={}", username, age);
+
+        response.getWriter().write("ok");
+    }
+
+```
+
+</br>
+
+- @RequestParam
+
+</br>
+
+```java
+
+@ResponseBody
+    @RequestMapping("/request-param-v2")
+    public String requestParamV2(
+            @RequestParam("username") String memberName,
+            @RequestParam("age") int memberAge){
+
+        log.info("username={}, age={}", memberName,memberAge);
+
+        return "ok";
+    }
+
+    @ResponseBody
+    @RequestMapping("/request-param-v3")
+    public String requestParamV3(
+            @RequestParam String username,
+            @RequestParam int age){
+
+        log.info("username={}, age={}", username,age);
+
+
+        return "ok";
+    }
+
+    @ResponseBody
+    @RequestMapping("/request-param-v4")
+    public String requestParam(String username, int age){
+        log.info("username={}, age={}",username,age);
+        return "ok";
+    }
+
+```
+
+> @RequestParam name 속성으로 파라미터 이름 사용  
+> `HTTP 파라미터 이름이 변수 이름과 같으면` name 속성 생략 가능!
+> v4처럼 어노테이션 생략 가능
+
+</br>
+
+- @RequestParam required
+
+</br>
+
+```java
+
+@ResponseBody
+    @RequestMapping("/request-param-required")
+    public String requestParamRequired(
+            @RequestParam String username,
+            @RequestParam(required = false) Integer age){
+
+        log.info("username={}, age={}", username, age);
+
+        return "ok";
+    }
+
+```
+
+</br>
+
+> 파라미터 필수 여부 체크
+> 파라미터 값이 없으면 400 예외 발생
+>
+> `/request-param?username=` 처럼 값이 없는 경우 -> `빈문자로 통과 되는 점 주의`  
+> primitive에 null 입력 500 예외 발생
+
+</br>
+
+- @RequestParam default
+
+</br>
+
+```java
+
+@ResponseBody
+    @RequestMapping("/request-param-default")
+    public String requestParamDefault(
+            @RequestParam(defaultValue = "guest") String username,
+            @RequestParam(defaultValue = "-1") int age) {
+
+        log.info("username={}, age={}", username, age);
+
+        return "ok";
+    }
+```
+
+</br>
+
+> 파라미터에 값이 없는 경우 defaultValue로 기본값 적용 가능
+> 빈문자열에도 기본값이 적용되는 장점
+
+</br>
+
+- 파라미터를 map으로 조회
+
+</br>
+
+```java
+
+@ResponseBody
+    @RequestMapping("request-param-map")
+    public String requestParamMap(
+            @RequestParam Map<String,Object> paramMap){
+
+        log.info("username={}, age={}",
+                paramMap.get("username"), paramMap.get("age"));
+
+        return "ok";
+    }
+
+
+```
+
+</br>
+
+- @ModelAttribute
+
+</br>
+
+```java
+
+@ResponseBody
+    @RequestMapping("/model-attribute-v1")
+    public String modelAttributeV1(@ModelAttribute HelloData helloData){
+        log.info("username={}, age={}",
+                helloData.getUsername(),helloData.getAge());
+
+        return "ok";
+    }
+
+
+```
+
+</br>
+
+> @ModelAttribute를 통해 객체에 바인딩 가능
+
+</br>
+
+#### **HTTP 요청 메시지 단순 텍스트**
+
+</br>
+
+```java
+
+@Slf4j
+@Controller
+public class RequestBodyStringController {
+
+
+    @PostMapping("/request-body-string-v1")
+    public void requestBodyString(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        // 스트림은 바이트 코드 -> 어떤 인코딩으로 문자를 바꿀건지 지정 해줘야함.
+        ServletInputStream inputStream = request.getInputStream();
+        String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+
+        log.info("messageBody={}", messageBody);
+
+        response.getWriter().write("ok");
+    }
+
+    @PostMapping("/request-body-string-v2")
+    public void requestBodyStringV2(InputStream inputStream, Writer responseWriter) throws IOException {
+
+        String messageBody = StreamUtils.copyToString(inputStream,StandardCharsets.UTF_8);
+
+        log.info("messageBody={}",messageBody);
+
+        responseWriter.write("ok");
+    }
+
+    @PostMapping("requests-body-string-v3")
+    public HttpEntity<String> requestBodyStringV3(HttpEntity<String> httpEntity){
+
+        String messageBody = httpEntity.getBody();
+        log.info("messageBody={}",messageBody);
+
+        return new HttpEntity<>("ok");
+    }
+
+    @ResponseBody
+    @PostMapping("/request-body-string-v4")
+    public String requestBodyStringV4(@RequestBody String messageBody){
+        log.info("messageBody={}",messageBody);
+        return "ok";
+    }
+
+
+}
+
+```
+
+</br>
+
+> HttpEntity나 @RequestBody를 통해 메시지 바디 받는 것이 간편하고 효율  
+> 메시지 바디를 직접 조회하는 것과 앞서 요청파라미터를 조회하는 것과는 관계 X
+
+</br>
+
+#### **HTTP 요청 메시지 - JSON**
+
+</br>
+
+```java
+
+@ResponseBody
+    @PostMapping("/request-body-json-v3")
+    public String requestBodyJsonV3(@RequestBody HelloData data)  {
+        /* 직접 만든 객체를 지정 가능
+        * @RequestBody는 생략 불가능
+        * 생략하면 @ModelAttribute가 붙어버리기 때문..
+        * */
+
+        log.info("username={}, age={}",data.getUsername(), data.getAge());
+        return "ok";
+    }
+
+    @ResponseBody
+    @PostMapping("/request-body-json-v4")
+    public String requestBodyJsonV4(HttpEntity<HelloData> httpEntity)  {
+        // 직접 만든 객체를 지정 가능
+        HelloData data = httpEntity.getBody();
+        log.info("username={}, age={}",data.getUsername(), data.getAge());
+        return "ok";
+    }
+
+    @ResponseBody
+    @PostMapping("/request-body-json-v5")
+    public HelloData requestBodyJsonV5(@RequestBody HelloData data)  {
+        // 직접 만든 객체를 지정 가능
+        log.info("username={}, age={}",data.getUsername(), data.getAge());
+        return data;
+    }
+
+```
+
+</br>
+
+#### **HTTP 응답 - 정적 리소스, 뷰 템플릿**
+
+</br>
+
+|    name     |        description        |                    directory                     |
+| :---------: | :-----------------------: | :----------------------------------------------: |
+| 정적 리소스 |    HTML, css, js 제공     | /static, /public, /resources. /META-INF/resouces |
+|  뷰 템플릿  |     동적인 HTML 제공      |           src/main/resources/templates           |
+| HTTP 메시지 | HTTP 메시지에 데이터 전송 |                                                  |
+
+</br>
+
+- 뷰 템플릿 호출
+
+</br>
+
+```java
+
+@Controller
+public class ResponseViewController {
+
+    @RequestMapping("/response-view-v1")
+    public ModelAndView responseViewV1(){
+        ModelAndView mav = new ModelAndView("response/hello")
+                .addObject("data","hello!");
+
+        return mav;
+    }
+
+    @RequestMapping("/response-view-v2")
+    public String responseViewV2(Model model){
+        model.addAttribute("data", "hello!");
+        return "response/hello";
+    }
+
+    // 권장하지 않는 방식
+    @RequestMapping("/response/hello")
+    public void responseViewV3(Model model){
+        model.addAttribute("data","hello!");
+    }
+}
+
+```
+
+</br>
+
+> ModelAndView를 사용하거나  
+> Model에 데이터를 담은 후 string return
+
+</br>
+
+#### **HTTP 응답 - HTTP API, 메시지 바디에 직접 입력**
+
+</br>
+
+```java
+
+@GetMapping("/response-body-string-v2")
+    public ResponseEntity<String> responseBody2(){
+        return new ResponseEntity<>("ok", HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @GetMapping("response-body-string-v3")
+    public String responseBodyV3(){
+        return "ok";
+    }
+
+    @GetMapping("/response-body-json-v1")
+    public ResponseEntity<HelloData> responseBodyJsonV1(){
+        HelloData helloData = new HelloData();
+        helloData.setUsername("userA");
+        helloData.setAge(20);
+
+        return new ResponseEntity<>(helloData,HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK) // 응답코드 지정 장점
+    @ResponseBody
+    @GetMapping("/response-body-json-v2")
+    public HelloData responseBodyJsonV2(){
+        HelloData helloData = new HelloData();
+        helloData.setUsername("userA");
+        helloData.setAge(20);
+
+        return helloData;
+    }
+
+```
+
+</br>
+
+- responseBody v2
+
+> ResponseEntity는 HttpEntity(Http 메시지의 헤더 바디 정보) 상속 받음  
+> ResponseEntity는 여기에 더해 HTTP 응답 코드 설정
+
+</br>
+
+- responseBody v3
+
+> @ResponseBody 사용하면 view를 사용하지 않고, HTTP 메시지 컨버터 통해 HTTP 메시지를 직접 입력 가능
+
+</br>
+
+- responseBodyJson v1
+
+> ResponseEntity를 반환. HTTP 메시지 컨버터 통해서 JSON 형식으로 변환
+
+</br>
+
+- responseBodyJson v2
+
+> ResponseEntity는 HTTP 응답 코드 설정 가능, but @ResponseBody는 까다로움
+> @ResponseStatus()를 사용하면 설정 가능. but 프로그램 조건에 따라 동적으로 변경 불가능
+
+</br>
+
+#### **HTTP 메시지 컨버터**
 
 ### **Section7 스프링 MVC - 웹 페이지 만들기**
 

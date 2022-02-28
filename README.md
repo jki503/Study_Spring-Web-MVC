@@ -1521,6 +1521,81 @@ public class ResponseViewController {
 
 #### **HTTP 메시지 컨버터**
 
+</br>
+
+- @ ResponseBody
+
+</br>
+
+|              @ResponseBody 동작 원리               |
+| :------------------------------------------------: |
+| ![resoponsebody 동작원리](./res/response_body.png) |
+
+</br>
+
+> HTTP의 body에 문자 내용 직접 반환  
+> viewResolver 대신에 `HttpMessageConverter가` 동작
+>
+> `StringHttpMessageConverter` : 기본 문자 처리
+> `MappingJackson2HttpMessageConverter` : 기본 객체 처리
+> byte 처리 등등 기타 여러 `HttpMessageConverter`가 기본으로 등록
+> 응답 : HTTP Accept 헤더와 서버의 컨트롤러 반환 타입 정보 둘을 조합해서 `HttpMessageConverter`가 선택
+
+</br>
+
+- HTTP 메시지 컨버터 인터페이스
+
+</br>
+
+> HTTP 요청, 응답 둘다 사용 가능  
+> canRead(), canWrite() : 메시지 컨버터가 해당 클래스, 미디어 타입 지원하는지 체크  
+> read(), write() : 메시지 컨버터를 통해서 메시지를 읽고 쓰는 기능
+
+</br>
+
+- 스프링 부트 기본 메시지 컨버터
+
+</br>
+
+| idx |                name                 |    media-type    |  class type   |
+| :-: | :---------------------------------: | :--------------: | :-----------: |
+|  0  |    ByteArrayHttpMessageConverter    |      \*/\*       |    byte[]     |
+|  1  |     StringHttpMessageConverter      |      \*/\*       |    String     |
+|  2  | MappingJackson2HttpMessageConverter | application/json | 객체, HashMap |
+
+</br>
+
+- RequestMappingHandlerAdapter 동작 원리
+
+</br>
+
+|                                                                         |
+| :---------------------------------------------------------------------: |
+| ![RequestMappingHandlerAdapter](./res/requestMappingHandlerAdapter.png) |
+
+</br>
+
+- HandlerMethodArgumentResolver
+
+</br>
+
+> ArgumentResolver의 `supportsParamerter()`를 호출하여 파라미터 지원하는지 체크
+> 지원하면 `resolveArgument()`를 호출하여 실제 객체 생성
+
+</br>
+
+- HandelrMethodReturnValueHandler
+
+</br>
+
+> 응답 값을 변환하고 처리
+> ArgumentResolver와 유사한 동작 방식
+> String으로 뷰 이름을 반환하여도 동작 가능케 해줌.
+
+</br>
+</br>
+</br>
+
 ### **Section7 스프링 MVC - 웹 페이지 만들기**
 
 </br>

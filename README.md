@@ -46,18 +46,6 @@ Author: Jung
     - [**HTTP 응답 - HTTP API, 메시지 바디에 직접 입력**](#http-응답---http-api-메시지-바디에-직접-입력)
     - [**HTTP 메시지 컨버터**](#http-메시지-컨버터)
   - [**Section7 스프링 MVC - 웹 페이지 만들기**](#section7-스프링-mvc---웹-페이지-만들기)
-- [**PART2**](#part2)
-  - [**PART2 프로젝트 생성**](#part2-프로젝트-생성)
-  - [**Section1타임리프 - 기본 기능**](#section1타임리프---기본-기능)
-  - [**Section2타임리프 - 스프링 통합과 폼**](#section2타임리프---스프링-통합과-폼)
-  - [**Section3메시지, 국제화**](#section3메시지-국제화)
-  - [**Section4Validation**](#section4validation)
-  - [**Section5Bean Validation**](#section5bean-validation)
-  - [**Section6로그인 처리1 - 쿠키, 세션**](#section6로그인-처리1---쿠키-세션)
-  - [**Section7로그인 처리2 - 필터, 인터셉터**](#section7로그인-처리2---필터-인터셉터)
-  - [**Section8예외 처리와 오류 페이지**](#section8예외-처리와-오류-페이지)
-  - [**Section9API 예외 처리**](#section9api-예외-처리)
-  - [**Section10스프링 타입 컨버터**](#section10스프링-타입-컨버터)
 
 </br>
 
@@ -1815,79 +1803,5 @@ public class BasicItemController {
 | ![prg](./res/prg.png) |
 
 </br>
-
->
-
 </br>
-</br>
-</br>
-
-## **PART2**
-
----
-
-</br>
-
-### **PART2 프로젝트 생성**
-
-</br>
-
-### **Section1타임리프 - 기본 기능**
-
-</br>
-
-</br>
-
-### **Section2타임리프 - 스프링 통합과 폼**
-
-</br>
-
-</br>
-
-### **Section3메시지, 국제화**
-
-</br>
-
-</br>
-
-### **Section4Validation**
-
-</br>
-
-</br>
-
-### **Section5Bean Validation**
-
-</br>
-
-</br>
-
-### **Section6로그인 처리1 - 쿠키, 세션**
-
-</br>
-
-</br>
-
-### **Section7로그인 처리2 - 필터, 인터셉터**
-
-</br>
-
-</br>
-
-### **Section8예외 처리와 오류 페이지**
-
-</br>
-
-</br>
-
-### **Section9API 예외 처리**
-
-</br>
-
-</br>
-
-### **Section10스프링 타입 컨버터**
-
-</br>
-
 </br>

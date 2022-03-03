@@ -1600,6 +1600,224 @@ public class ResponseViewController {
 
 </br>
 
+- Item.java
+
+</br>
+
+```java
+
+package hello.itemservice.domain.item;
+
+import lombok.Data;
+
+@Data
+public class Item {
+
+    private Long id;
+    private String itemName;
+    private Integer price;
+    private Integer quantity;
+
+    public Item(){
+
+    }
+
+    public Item(String itemName, Integer price, Integer quantity) {
+        this.id = id;
+        this.itemName = itemName;
+        this.price = price;
+        this.quantity = quantity;
+    }
+}
+
+
+```
+
+- ItemRepository.java
+
+```java
+
+package hello.itemservice.domain.item;
+
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Repository
+public class ItemRepository {
+
+    private static final Map<Long, Item> store = new HashMap<>();
+    private static long sequence = 0L;
+
+    public Item save(Item item){
+        item.setId(++sequence);
+        store.put(item.getId(),item);
+        return item;
+    }
+
+    public Item findById(Long id){
+        return store.get(id);
+    }
+
+    public List<Item> findAll(){
+        return new ArrayList<>(store.values());
+    }
+
+    public void update(Long itemId, Item updateParam){
+        Item findItem = findById(itemId);
+
+        findItem.setItemName(updateParam.getItemName());
+        findItem.setPrice(updateParam.getPrice());
+        findItem.setQuantity(updateParam.getQuantity());
+    }
+
+    public void clearStore(){
+        store.clear();
+    }
+
+}
+
+
+```
+
+</br>
+
+- BasicItemController.java
+
+</br>
+
+```java
+
+package hello.itemservice.domain.web.basic;
+
+import hello.itemservice.domain.item.Item;
+import hello.itemservice.domain.item.ItemRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+
+@Controller
+@RequestMapping("/basic/items")
+@RequiredArgsConstructor
+public class BasicItemController {
+
+    private final ItemRepository itemRepository;
+
+    @GetMapping
+    public String items(Model model){
+        List<Item> items = itemRepository.findAll();
+        model.addAttribute("items",items);
+        return "basic/items";
+    }
+
+    @GetMapping("/{itemId}")
+    public String item(@PathVariable long itemId, Model model){
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute(item);
+        return "basic/item";
+    }
+
+    @GetMapping("/add")
+    public String addForm(){
+        return "basic/addForm";
+    }
+
+
+//    @PostMapping("/add")
+    public String addItem(@ModelAttribute Item item){
+        itemRepository.save(item);
+        return "basic/item"; // 새로고침시 마지막 요청 post가 반복되어 중복 저장되는 문제
+    }
+
+//    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute Item item){
+        itemRepository.save(item);
+
+        return "redirect:/basic/items/" + item.getId(); // url 인코딩 안되는 문제
+    }
+
+    @PostMapping("/add")
+    public String addItem3(@ModelAttribute Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId",savedItem.getId());
+        redirectAttributes.addAttribute("status",true); // 저장된 상태 쿼리파라미터로
+
+        return "redirect:/basic/items/{itemId}";
+    }
+
+
+
+    @GetMapping("{itemId}/edit")
+    public String editForm(@PathVariable Long itemId, Model model){
+        Item item = itemRepository.findById(itemId);
+        model.addAttribute("item",item);
+        return "basic/editForm";
+    }
+
+    @PostMapping("{itemId}/edit")
+    public String edit(@PathVariable Long itemId, @ModelAttribute Item item){
+        itemRepository.update(itemId,item);
+        return "redirect:/basic/items/{itemId}";
+    }
+
+    /**
+     *  테스트용 데이터
+     * */
+    @PostConstruct
+    public void init(){
+        itemRepository.save(new Item("testA",10000,10));
+        itemRepository.save(new Item("testB",20000,20));
+    }
+
+}
+
+
+```
+
+</br>
+
+> @RequiredArgsConstructor : final이 붙은 멤버 변수만 사용하여 자동으로 생성자 만들기
+> @PostConstruct : 해당 빈의 모든 의존관계가 주입되고 초기화 용도로 사용
+
+</br>
+
+- PRG Post/Redirect/Get
+
+</br>
+
+> addItem 함수는 redirect 설정 X -> 상품 등록 후 새로고침을 하면 마지막으로 전송한 POST /add 상품 데이터를 다시 서버로 전송
+> 새로고침 문제를 해결하기 위해 상품 저장 후 뷰템플릿 이동 X -> 상품 상세 화면으로 리다이렉트 호출  
+> 즉 상품 등록 처리 이후 뷰 템플릿이 아닌 상품 상세 화면으로 리다이렉트 하는 문제 해결 방식을 PRG라 한다.
+
+</br>
+
+- RedirectAttributes
+
+</br>
+
+> addItemV3에서 RedirectAttribute에 status 파라미터 저장 후
+> 뷰 템플릿에서 동적으로 html 변경하여 사용자에게 알려줄 수 있는 방법
+> pathVariable 바인딩 {itemId}
+> 나머지는 쿼리 파라미터로 처리 : ?status=true;
+
+</br>
+
+|                       |
+| :-------------------: |
+| ![prg](./res/prg.png) |
+
+</br>
+
+>
+
 </br>
 </br>
 </br>
